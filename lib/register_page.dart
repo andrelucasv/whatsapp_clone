@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:whatsapp_clone/register_page.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class Cadastro extends StatefulWidget {
+  const Cadastro({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Cadastro> createState() => _CadastroState();
 }
 
-class _LoginState extends State<Login> {
+class _CadastroState extends State<Cadastro> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Cadastro"),
+      ),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -27,9 +29,25 @@ class _LoginState extends State<Login> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 32),
                   child: Image.asset(
-                    "assets/images/logo.png", 
+                    "assets/images/usuario.png", 
                     width: 200, 
                     height: 150,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: TextField(
+                    keyboardType: TextInputType.text,
+                    style: const TextStyle(fontSize: 20),
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
+                      hintText: "Nome",
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(32)
+                      )
+                    ),
                   ),
                 ),
                 Padding(
@@ -75,27 +93,11 @@ class _LoginState extends State<Login> {
                       ))
                     ),
                     child: const Text(
-                      "Entrar",
+                      "Cadastrar",
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     )
                   ),
-                ),
-                Center(
-                  child: GestureDetector(
-                    child: const Text(
-                      "Não tem conta? Cadastre-se!",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context, 
-                        MaterialPageRoute(
-                          builder: (context) => const Cadastro()
-                        )
-                      );
-                    },
-                  ),
-                )
+                ), 
               ],
             ),
           ),
