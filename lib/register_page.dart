@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:whatsapp_clone/home_page.dart';
+import 'package:whatsapp_clone/model/user.dart';
 
 class Cadastro extends StatefulWidget {
   const Cadastro({super.key});
@@ -26,12 +29,18 @@ class _CadastroState extends State<Cadastro> {
 
       if(email.isNotEmpty && email.contains("@")) {
 
-        if(senha.isNotEmpty && senha.length >= 6) {
+        if(senha.isNotEmpty && senha.length > 6) {
 
           setState(() {
             _mensagemErro = "";
           });
-          _cadastrarUsuario();
+
+          Usuario usuario = Usuario();
+          usuario.nome = nome;
+          usuario.email = email;
+          usuario.senha = senha;
+
+          _cadastrarUsuario(usuario);
       
         } else {
           setState(() {
@@ -53,7 +62,31 @@ class _CadastroState extends State<Cadastro> {
 
   }
 
-  _cadastrarUsuario() {
+  _cadastrarUsuario(Usuario usuario) {
+
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    try {
+
+      auth.createUserWithEmailAndPassword(
+      email: usuario.email!, 
+      password: usuario.senha!
+      );
+      
+      Navigator.push(
+        context, 
+        MaterialPageRoute(
+          builder: (context) => const Home()
+        )
+      );
+
+    } on FirebaseAuthException catch (error) {
+
+      setState(() {
+        _mensagemErro = "Erro ao cadastrar usuário, verifique os campos e tente novamente";
+      });
+      debugPrint("Erro app: ${error.toString()}");
+    }
 
   }
 

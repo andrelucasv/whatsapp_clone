@@ -13,8 +13,8 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("WhatsApp"),
-        backgroundColor: Colors.green,
       ),
+      body: Container(),
     );
   }
 }
