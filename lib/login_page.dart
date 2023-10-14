@@ -92,7 +92,7 @@ class _LoginState extends State<Login> {
    Future _verificarUsuarioLogado() async {
 
     FirebaseAuth auth = FirebaseAuth.instance;
-    await auth.signOut();
+    //await auth.signOut();
 
     auth.authStateChanges()
       .listen((User? user) {

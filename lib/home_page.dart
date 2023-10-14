@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:whatsapp_clone/tabs/contatos_tab.dart';
+import 'package:whatsapp_clone/tabs/conversas_tab.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -8,8 +10,9 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
+  late TabController _tabController;
   String? _emailUsuario = "";
 
   _recuperarDadosUsuario() {
@@ -25,8 +28,15 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    _recuperarDadosUsuario();
     super.initState();
+
+    _recuperarDadosUsuario();
+
+  _tabController = TabController(
+    length: 2, 
+    vsync: this
+  );
+
   }
 
   @override
@@ -34,9 +44,28 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("WhatsApp"),
-        automaticallyImplyLeading: false
+        automaticallyImplyLeading: false,
+         bottom: TabBar(
+          indicatorWeight: 4,
+          labelStyle: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold
+          ),
+          controller: _tabController,
+          indicatorColor: Colors.white,
+          tabs: const [
+            Tab(text: "Conversas"),
+            Tab(text: "Contatos")
+          ]
+        ),
       ),
-      body: Text(_emailUsuario!),
+      body: TabBarView(
+        controller: _tabController,
+        children: const [
+          TabConversas(),
+          TabaContatos()
+        ],
+      ),
     );
   }
 }
