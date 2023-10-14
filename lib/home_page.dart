@@ -34,6 +34,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("WhatsApp"),
+        automaticallyImplyLeading: false
       ),
       body: Text(_emailUsuario!),
     );

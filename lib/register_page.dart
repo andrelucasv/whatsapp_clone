@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:whatsapp_clone/home_page.dart';
@@ -62,23 +63,33 @@ class _CadastroState extends State<Cadastro> {
 
   }
 
-  _cadastrarUsuario(Usuario usuario) {
+  _cadastrarUsuario(Usuario usuario) async {
 
     FirebaseAuth auth = FirebaseAuth.instance;
 
     try {
 
-      auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
       email: usuario.email!, 
       password: usuario.senha!
       );
+
+      FirebaseFirestore db = FirebaseFirestore.instance;
+
+      db.collection("usuarios")
+        .doc(userCredential.user!.uid)
+        .set(usuario.toMap());
       
-      Navigator.push(
-        context, 
-        MaterialPageRoute(
-          builder: (context) => const Home()
-        )
-      );
+      if(context.mounted) {
+
+        Navigator.pushReplacement(
+          context, 
+          MaterialPageRoute(
+            builder: (context) => const Home()
+          )
+        );
+
+      }
 
     } on FirebaseAuthException catch (error) {
 

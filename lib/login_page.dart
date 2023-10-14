@@ -69,7 +69,7 @@ class _LoginState extends State<Login> {
 
       if(context.mounted) {
 
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => const Home()
@@ -97,7 +97,7 @@ class _LoginState extends State<Login> {
     auth.authStateChanges()
       .listen((User? user) {
         if(user != null) {
-          Navigator.push(
+          Navigator.pushReplacement(
             context, 
             MaterialPageRoute(
               builder: (context) => const Home()
