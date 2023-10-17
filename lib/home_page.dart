@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:whatsapp_clone/login_page.dart';
 import 'package:whatsapp_clone/tabs/contatos_tab.dart';
 import 'package:whatsapp_clone/tabs/conversas_tab.dart';
 
@@ -13,6 +14,10 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   late TabController _tabController;
+  List<String> itensMenu = [
+    "Configurações",
+    "Deslogar"
+  ];
   String? _emailUsuario = "";
 
   _recuperarDadosUsuario() {
@@ -32,10 +37,39 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
     _recuperarDadosUsuario();
 
-  _tabController = TabController(
-    length: 2, 
-    vsync: this
-  );
+    _tabController = TabController(
+      length: 2, 
+      vsync: this
+    );
+  }
+
+  _escolhaMenuItem(String itmeEscolhido) {
+
+    switch(itmeEscolhido) {
+      case "Configurações":
+        debugPrint("Configurações");
+        break;
+      case "Deslogar":
+        _deslogarUsuario();
+        break;
+
+    }
+
+  }
+
+  _deslogarUsuario() async {
+    
+    FirebaseAuth auth = FirebaseAuth.instance;
+    await auth.signOut();
+
+    if(context.mounted) {
+      Navigator.pushReplacement(
+        context, 
+        MaterialPageRoute(
+          builder: (context) => const Login()
+        )
+      );
+    }
 
   }
 
@@ -45,7 +79,20 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       appBar: AppBar(
         title: const Text("WhatsApp"),
         automaticallyImplyLeading: false,
-         bottom: TabBar(
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: _escolhaMenuItem,
+            itemBuilder: (context) {
+              return itensMenu.map((String item) {
+                return PopupMenuItem<String>(
+                  value: item,
+                  child: Text(item),
+                );
+              }).toList();
+            },
+          )
+        ],
+        bottom: TabBar(
           indicatorWeight: 4,
           labelStyle: const TextStyle(
             fontSize: 18,
