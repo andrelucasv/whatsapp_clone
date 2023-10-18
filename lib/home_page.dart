@@ -76,6 +76,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: const Text("WhatsApp"),
+        //automaticallyImplyLeading: false,
         actions: [
           PopupMenuButton<String>(
             onSelected: _escolhaMenuItem,
