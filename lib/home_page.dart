@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:whatsapp_clone/login_page.dart';
 import 'package:whatsapp_clone/tabs/contatos_tab.dart';
 import 'package:whatsapp_clone/tabs/conversas_tab.dart';
 
@@ -18,8 +17,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     "Configurações",
     "Deslogar"
   ];
-  String? _emailUsuario = "";
+  //String? _emailUsuario = "";
 
+  /*
   _recuperarDadosUsuario() {
 
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -30,12 +30,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
 
   }
+  */
 
   @override
   void initState() {
     super.initState();
 
-    _recuperarDadosUsuario();
+    //_recuperarDadosUsuario();
 
     _tabController = TabController(
       length: 2, 
@@ -63,12 +64,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     await auth.signOut();
 
     if(context.mounted) {
-      Navigator.pushReplacement(
-        context, 
-        MaterialPageRoute(
-          builder: (context) => const Login()
-        )
-      );
+      
+      Navigator.pushReplacementNamed(context, "/login");
+
     }
 
   }
@@ -78,7 +76,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: const Text("WhatsApp"),
-        automaticallyImplyLeading: false,
         actions: [
           PopupMenuButton<String>(
             onSelected: _escolhaMenuItem,

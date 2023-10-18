@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:whatsapp_clone/home_page.dart';
 import 'package:whatsapp_clone/model/user.dart';
 import 'package:whatsapp_clone/register_page.dart';
 
@@ -69,12 +68,7 @@ class _LoginState extends State<Login> {
 
       if(context.mounted) {
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const Home()
-          )
-        );
+        Navigator.pushReplacementNamed(context, "/home");
 
       }
 
@@ -97,12 +91,7 @@ class _LoginState extends State<Login> {
     auth.authStateChanges()
       .listen((User? user) {
         if(user != null) {
-          Navigator.pushReplacement(
-            context, 
-            MaterialPageRoute(
-              builder: (context) => const Home()
-            )
-          );
+          Navigator.pushReplacementNamed(context, "/home");
         }
       });
 
