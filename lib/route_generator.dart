@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:whatsapp_clone/configuracoes_menu.dart';
 import 'package:whatsapp_clone/home_page.dart';
 import 'package:whatsapp_clone/login_page.dart';
 import 'package:whatsapp_clone/register_page.dart';
@@ -24,9 +25,13 @@ class RouteGenerator {
         return MaterialPageRoute(
           builder: (_) => const Home()
         );
+      case "/configuracoes" :
+        return MaterialPageRoute(
+          builder: (_) => const Configuracoes()
+        );
       default: _erroRota();
     }
-    
+
     return null;
   
   }
