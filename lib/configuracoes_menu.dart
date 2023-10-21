@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -13,6 +15,9 @@ class _ConfiguracoesState extends State<Configuracoes> {
 
   final TextEditingController _controllerNome = TextEditingController();
   File? _imagem;
+  String? _idUsuarioLogado = "";
+  bool _subindoImagem = false;
+  String? _urlImagemRecuperada;
 
   Future _recuperarImagem(String origemImagem) async {
 
@@ -28,8 +33,69 @@ class _ConfiguracoesState extends State<Configuracoes> {
 
     setState(() {
       _imagem = File(imagemSelecionada!.path);
+      if(_imagem != null) {
+        _subindoImagem = true;
+        _uploadImagem();
+      }
     });
 
+  }
+
+  Future _uploadImagem() async {
+
+    FirebaseStorage storage = FirebaseStorage.instance;
+    Reference pastaRaiz = storage.ref();
+    Reference arquivo = 
+      pastaRaiz.child("perfil")
+      .child("$_idUsuarioLogado.jpg");
+
+    //Upload da imagem
+    UploadTask uploadTask = arquivo.putFile(File(_imagem!.path));
+
+    //Controlar progresso do upload
+    uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
+
+      if(taskSnapshot.state == TaskState.running) {
+        setState(() {
+          _subindoImagem = true;
+        });
+      } else if(taskSnapshot.state == TaskState.success) {
+        setState(() {
+          _subindoImagem = false;
+        });
+      }
+
+    });
+
+    //Recuperar a url da imagem
+    uploadTask.then((TaskSnapshot snapshot) {
+      _recuperarUrlImagem(snapshot);
+    });
+
+  }
+
+  Future _recuperarUrlImagem(TaskSnapshot snapshot) async {
+     
+    String url = await snapshot.ref.getDownloadURL();
+
+    setState(() {
+      _urlImagemRecuperada = url;
+    });
+
+  }
+
+  _recuperarDadosUsuario() {
+
+    FirebaseAuth auth = FirebaseAuth.instance;
+    var usuarioLogado = auth.currentUser;
+    _idUsuarioLogado = usuarioLogado!.uid;
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _recuperarDadosUsuario();
   }
 
   @override
@@ -44,10 +110,16 @@ class _ConfiguracoesState extends State<Configuracoes> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const CircleAvatar(
+                _subindoImagem
+                ? const CircularProgressIndicator()
+                : Container(),
+                CircleAvatar(
                   radius: 100,
                   backgroundColor: Colors.grey,
-                  backgroundImage: NetworkImage("https://firebasestorage.googleapis.com/v0/b/whatsapp-8864e.appspot.com/o/perfil%2Fperfil4.jpg?alt=media&token=b2fd2f96-394e-4d50-905f-977a00af612a"),
+                  backgroundImage: 
+                  _urlImagemRecuperada == null
+                  ? null
+                  : NetworkImage(_urlImagemRecuperada!),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
