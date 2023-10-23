@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -77,18 +78,61 @@ class _ConfiguracoesState extends State<Configuracoes> {
   Future _recuperarUrlImagem(TaskSnapshot snapshot) async {
      
     String url = await snapshot.ref.getDownloadURL();
+    _atualizarUrlImagemFirestore(url);
 
     setState(() {
       _urlImagemRecuperada = url;
     });
 
   }
+  _atualizarNomeFirestore() {
+    
+    String nome = _controllerNome.text;
+    FirebaseFirestore db = FirebaseFirestore.instance;
 
-  _recuperarDadosUsuario() {
+    Map<String, dynamic> dadosAtualizar = {
+      "nome" : nome
+    };
+
+    db.collection("usuarios")
+      .doc(_idUsuarioLogado)
+      .update(dadosAtualizar);
+
+  }
+
+  _atualizarUrlImagemFirestore(String url) {
+    
+    FirebaseFirestore db = FirebaseFirestore.instance;
+
+    Map<String, dynamic> dadosAtualizar = {
+      "urlImagem" : url
+    };
+
+    db.collection("usuarios")
+      .doc(_idUsuarioLogado)
+      .update(dadosAtualizar);
+
+  }
+
+  _recuperarDadosUsuario() async {
 
     FirebaseAuth auth = FirebaseAuth.instance;
     var usuarioLogado = auth.currentUser;
     _idUsuarioLogado = usuarioLogado!.uid;
+
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    DocumentSnapshot snapshot = await db.collection("usuarios")
+      .doc(_idUsuarioLogado)
+      .get();
+
+      dynamic dadosUsuarioRecuperado = snapshot.data();
+      _controllerNome.text = dadosUsuarioRecuperado["nome"];
+
+      if(dadosUsuarioRecuperado["urlImagem"] != null ) {
+        setState(() {
+          _urlImagemRecuperada = dadosUsuarioRecuperado["urlImagem"];
+        });
+      }
 
   }
 
@@ -110,9 +154,13 @@ class _ConfiguracoesState extends State<Configuracoes> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                _subindoImagem
-                ? const CircularProgressIndicator()
-                : Container(),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  child: 
+                    _subindoImagem
+                      ? const CircularProgressIndicator()
+                      : Container(),
+                ),
                 CircleAvatar(
                   radius: 100,
                   backgroundColor: Colors.grey,
@@ -144,6 +192,9 @@ class _ConfiguracoesState extends State<Configuracoes> {
                     controller: _controllerNome,
                     keyboardType: TextInputType.text,
                     style: const TextStyle(fontSize: 20),
+                    /*onChanged: (texto) {
+                      _atualizarNomeFirestore(texto);
+                    },*/
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
                       hintText: "Nome",
@@ -159,7 +210,7 @@ class _ConfiguracoesState extends State<Configuracoes> {
                   padding: const EdgeInsets.only(top: 16, bottom: 10),
                   child: ElevatedButton(
                     onPressed: () {
-                      
+                      _atualizarNomeFirestore();
                     },
                     style: ButtonStyle(
                       backgroundColor: const MaterialStatePropertyAll(Colors.green),
