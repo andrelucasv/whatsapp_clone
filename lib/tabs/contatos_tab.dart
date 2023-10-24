@@ -85,6 +85,13 @@ class _TabaContatosState extends State<TabaContatos> {
                 Usuario usuario = listaItens[index];
 
                 return ListTile(
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context, 
+                      "/mensagens",
+                      arguments: usuario
+                    );
+                  },
                   contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                   leading: CircleAvatar(
                     maxRadius: 30,
