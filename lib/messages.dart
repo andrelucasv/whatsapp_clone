@@ -12,6 +12,22 @@ class Mensagens extends StatefulWidget {
 
 class _MensagensState extends State<Mensagens> {
 
+  List<String> listaMensagens = [
+    "Fala comigo meu irmão, tudo tranquilo?",
+    "Tudo traquilo, mano e contigo?",
+    "Tô bem. Vamos para academia hoje",
+    "Ainda não sei",
+    "Se tu for, eu vou contigo ein",
+    "Beleza, assim que sair do trabalho eu te aviso",
+    "Vai treinar o que hoje, mano??",
+    "Então irmão, na minha é um treino de costas",
+    "Opa! Vou treinar costas hoje também",
+    "Showw, vamos treinar juntos?",
+    "Boraa manoo!!",
+    "Massa, vou apressar aqui!!",
+    "Beleza, manito!! Não esquece de avisar"
+
+  ];
   final TextEditingController _controllerMensagem = TextEditingController();
 
   _enviarMensagem() {
@@ -62,6 +78,46 @@ class _MensagensState extends State<Mensagens> {
     ),
   );
 
+  var listView = Expanded(
+    child: ListView.builder(
+      itemCount: listaMensagens.length,
+      itemBuilder: (context, index) {
+
+        double larguraContainer = MediaQuery.of(context).size.width * 0.8;
+
+        //Define cores e alinhamentos por posição
+        Alignment alinhamento = Alignment.centerRight;
+        Color cor = const Color(0xffd2ffa5);
+        if(index % 2 == 0) {
+          cor = Colors.white;
+          alinhamento = Alignment.centerLeft;
+        }
+        
+        return Align(
+          alignment: alinhamento,
+          child: Padding(
+            padding: const EdgeInsets.all(6),
+            child: Container(
+              width: larguraContainer,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: cor,
+                borderRadius: const BorderRadius.all(Radius.circular(8))
+              ),
+              child: Text(
+                listaMensagens[index],
+                style: const TextStyle(
+                  fontSize: 16
+                ),
+              ),
+            ),
+          ),
+        );
+
+      }
+    )
+  );
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.contato.nome!),
@@ -79,10 +135,8 @@ class _MensagensState extends State<Mensagens> {
             padding: const EdgeInsets.all(8),
             child: Column(
               children: [
-                const Text("ListView"),
+                listView,
                 caixaMensagem
-                //ListView
-                //TextField
               ],
             ),
           )
