@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:whatsapp_clone/model/mensagem.dart';
 import 'package:whatsapp_clone/model/user.dart';
 
 class Mensagens extends StatefulWidget {
@@ -12,6 +15,8 @@ class Mensagens extends StatefulWidget {
 
 class _MensagensState extends State<Mensagens> {
 
+  String? _idUsuarioLogado;
+  String? _idUsuarioDestinatario;
   List<String> listaMensagens = [
     "Fala comigo meu irmão, tudo tranquilo?",
     "Tudo traquilo, mano e contigo?",
@@ -32,10 +37,63 @@ class _MensagensState extends State<Mensagens> {
 
   _enviarMensagem() {
     
+    String textoMensagem = _controllerMensagem.text;
+    if(textoMensagem.isNotEmpty) {
+
+      Mensagem mensagem = Mensagem();
+      mensagem.idUsuario = _idUsuarioLogado;
+      mensagem.mensagem = textoMensagem;
+      mensagem.urlImagem = "";
+      mensagem.tipo = "texto";
+
+      _salvarMensagem(_idUsuarioLogado!, _idUsuarioDestinatario!, mensagem);
+
+    }
+
+  }
+
+  _salvarMensagem(String idRemetente, String idDestinario, Mensagem msg) async {
+
+    FirebaseFirestore db = FirebaseFirestore.instance;
+
+    await db.collection("mensagens")
+      .doc(idRemetente)
+      .collection(idDestinario)
+      .add(msg.toMap());
+
+      //Limpa texto
+      _controllerMensagem.clear();
+
+    /*
+
+    +mensagens
+      + usuarioRemetente
+        + usuarioDestinatario
+          +identificadorFirebase
+            <Mensagem>
+
+    */
+
   }
 
   _enviarFoto() {
 
+  }
+
+  _recuperarDadosUsuario() async {
+
+    FirebaseAuth auth = FirebaseAuth.instance;
+    var usuarioLogado = auth.currentUser;
+    _idUsuarioLogado = usuarioLogado!.uid;
+
+    _idUsuarioDestinatario = widget.contato.idUsuario;
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _recuperarDadosUsuario();
   }
 
   @override
@@ -120,7 +178,22 @@ class _MensagensState extends State<Mensagens> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.contato.nome!),
+        title: Row(
+          children: [
+            CircleAvatar(
+                    maxRadius: 20,
+                    backgroundColor: Colors.grey,
+                    backgroundImage: 
+                    widget.contato.urlImagem != null
+                      ? NetworkImage(widget.contato.urlImagem!)
+                      : null
+                  ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(widget.contato.nome!),
+            )
+          ],
+        ),
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,

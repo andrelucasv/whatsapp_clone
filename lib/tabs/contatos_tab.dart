@@ -30,6 +30,7 @@ class _TabaContatosState extends State<TabaContatos> {
       if(dados["email"] == _emailUsuarioLogado) continue;
 
       Usuario usuario = Usuario();
+      usuario.idUsuario = item.id;
       usuario.email = dados["email"];
       usuario.nome = dados["nome"];
       usuario.urlImagem = dados["urlImagem"];

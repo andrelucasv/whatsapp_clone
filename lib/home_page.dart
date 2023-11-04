@@ -17,9 +17,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     "Configurações",
     "Deslogar"
   ];
-  //String? _emailUsuario = "";
+  String? _emailUsuario = "";
 
-  /*
+  
   _recuperarDadosUsuario() {
 
     FirebaseAuth auth = FirebaseAuth.instance;
@@ -30,14 +30,29 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     }
 
   }
-  */
+
+  Future _verificarUsuarioLogado() async {
+
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    auth.authStateChanges()
+      .listen((User? user) async {
+        if(user == null) {
+          if (mounted) {
+          await Navigator.pushReplacementNamed(context, "/login");
+          }
+        }
+      });
+
+  }
+  
 
   @override
   void initState() {
     super.initState();
 
-    //_recuperarDadosUsuario();
-
+    _verificarUsuarioLogado();
+    _recuperarDadosUsuario();
     _tabController = TabController(
       length: 2, 
       vsync: this
