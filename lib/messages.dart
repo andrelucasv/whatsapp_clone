@@ -17,6 +17,8 @@ class _MensagensState extends State<Mensagens> {
 
   String? _idUsuarioLogado;
   String? _idUsuarioDestinatario;
+  FirebaseFirestore db = FirebaseFirestore.instance;
+
   List<String> listaMensagens = [
     "Fala comigo meu irmão, tudo tranquilo?",
     "Tudo traquilo, mano e contigo?",
@@ -53,8 +55,6 @@ class _MensagensState extends State<Mensagens> {
   }
 
   _salvarMensagem(String idRemetente, String idDestinario, Mensagem msg) async {
-
-    FirebaseFirestore db = FirebaseFirestore.instance;
 
     await db.collection("mensagens")
       .doc(idRemetente)
@@ -136,6 +136,82 @@ class _MensagensState extends State<Mensagens> {
     ),
   );
 
+  var stream = StreamBuilder(
+    stream: db.collection("mensagens")
+              .doc(_idUsuarioLogado)
+              .collection(_idUsuarioDestinatario!)
+              .snapshots(),
+    builder: (context, snapshot) {
+      switch(snapshot.connectionState) {
+        case ConnectionState.none:
+        case ConnectionState.waiting:
+          return const Center(
+            child: Column(
+              children: [
+                Text("Carregando mensagens ..."),
+                CircularProgressIndicator()
+              ],
+            ),
+          );
+        case ConnectionState.active:
+        case ConnectionState.done:
+          QuerySnapshot<Map<String, dynamic>>? querySnapshot = snapshot.data;
+
+          if(snapshot.hasError) {
+            return const Expanded(
+              child: Text("Erro ao carregar dados")
+            );
+          } else {
+
+            return Expanded(
+              child: ListView.builder(
+                itemCount: querySnapshot!.docs.length,
+                itemBuilder: (context, index) {
+
+                  //Recuperar mensagem
+                  List<DocumentSnapshot> mensagens = querySnapshot.docs.toList();
+                  DocumentSnapshot item = mensagens[index];
+
+                  double larguraContainer = MediaQuery.of(context).size.width * 0.8;
+
+                  //Define cores e alinhamentos por posição
+                  Alignment alinhamento = Alignment.centerRight;
+                  Color cor = const Color(0xffd2ffa5);
+                  if(_idUsuarioLogado != item["idUsuario"]) {
+                    cor = Colors.white;
+                    alinhamento = Alignment.centerLeft;
+                  }
+                  
+                  return Align(
+                    alignment: alinhamento,
+                    child: Padding(
+                      padding: const EdgeInsets.all(6),
+                      child: Container(
+                        width: larguraContainer,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: cor,
+                          borderRadius: const BorderRadius.all(Radius.circular(8))
+                        ),
+                        child: Text(
+                          item["mensagemEnviada"],
+                          style: const TextStyle(
+                            fontSize: 16
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+
+                }
+              )
+            );
+
+          }
+      }
+    }
+  );
+
   var listView = Expanded(
     child: ListView.builder(
       itemCount: listaMensagens.length,
@@ -208,7 +284,7 @@ class _MensagensState extends State<Mensagens> {
             padding: const EdgeInsets.all(8),
             child: Column(
               children: [
-                listView,
+                stream,
                 caixaMensagem
               ],
             ),
