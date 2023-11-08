@@ -48,7 +48,11 @@ class _MensagensState extends State<Mensagens> {
       mensagem.urlImagem = "";
       mensagem.tipo = "texto";
 
+      //Salvar mensaegem para remetente
       _salvarMensagem(_idUsuarioLogado!, _idUsuarioDestinatario!, mensagem);
+
+      //Salvar mensagem para o destinatário
+      _salvarMensagem(_idUsuarioDestinatario!, _idUsuarioLogado!, mensagem);
 
     }
 
