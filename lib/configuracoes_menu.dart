@@ -85,6 +85,7 @@ class _ConfiguracoesState extends State<Configuracoes> {
     });
 
   }
+  
   _atualizarNomeFirestore() {
     
     String nome = _controllerNome.text;
