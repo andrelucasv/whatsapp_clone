@@ -37,7 +37,7 @@ class _MensagensState extends State<Mensagens> {
       mensagem.urlImagem = "";
       mensagem.tipo = "texto";
 
-      //Salvar mensaegem para remetente
+      //Salvar mensagem para remetente
       _salvarMensagem(_idUsuarioLogado!, _idUsuarioDestinatario!, mensagem);
 
       //Salvar mensagem para o destinatário
@@ -136,7 +136,7 @@ class _MensagensState extends State<Mensagens> {
     mensagem.urlImagem = url;
     mensagem.tipo = "imagem";
 
-    //Salvar mensaegem para remetente
+    //Salvar mensagem para remetente
     _salvarMensagem(_idUsuarioLogado!, _idUsuarioDestinatario!, mensagem);
 
     //Salvar mensagem para o destinatário
@@ -222,9 +222,7 @@ class _MensagensState extends State<Mensagens> {
           QuerySnapshot<Map<String, dynamic>>? querySnapshot = snapshot.data;
 
           if(snapshot.hasError) {
-            return const Expanded(
-              child: Text("Erro ao carregar dados")
-            );
+            return const Text("Erro ao carregar dados");
           } else {
 
             return Expanded(
